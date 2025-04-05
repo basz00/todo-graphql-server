@@ -1,28 +1,46 @@
 const resolvers = {
   Query: {
-    info: () => "This is the note app test",
-    feed: async (parent, args, context) => {
-      return context.prisma.link.findMany();
+    todos: async (_parent, _args, context) => {
+      return context.prisma.todo.findMany();
     },
   },
   Mutation: {
-    post: (parent, args, context) => {
-      const { url, description } = args;
-      const newLink = context.prisma.link.create({
+    createTodo: async (_parent, args, context) => {
+      const { note } = args;
+      const newTodo = await context.prisma.todo.create({
         data: {
-          url,
-          description,
+          note,
         },
       });
-      return newLink;
+      context.pubsub.publish("TODO_UPDATED", { todoUpdated: newTodo });
+      return newTodo;
+    },
+    updateTodo: async (_parent, args, context) => {
+      const { id, status, note } = args;
+      const updatedTodo = await context.prisma.todo.update({
+        where: { id: parseInt(id) },
+        data: {
+          ...{ status, note },
+        },
+      });
+      context.pubsub.publish("TODO_UPDATED", { todoUpdated: updatedTodo });
+      return updatedTodo;
+    },
+    deleteTodo: async (_parent, args, context) => {
+      const { id } = args;
+      const deletedTodo = await context.prisma.todo.delete({
+        where: { id: parseInt(id) },
+      });
+      context.pubsub.publish("TODO_UPDATED", { todoUpdated: deletedTodo });
+      return deletedTodo;
     },
   },
-  //   no need, because graphql default resolver will handle this as this contains only primitive data types
-  //   Link: {
-  //     id: (parent) => parent.id,
-  //     description: (parent) => parent.description,
-  //     url: (parent) => parent.url,
-  //   },
+  Subscription: {
+    todoUpdated: {
+      subscribe: (_parent, _args, context) =>
+        context.pubsub.asyncIterableIterator(["TODO_UPDATED"]),
+    },
+  },
 };
 
-module.exports = resolvers;
+export default resolvers;

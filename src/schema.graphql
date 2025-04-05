@@ -1,14 +1,21 @@
 type Query {
-  info: String!
-  feed: [Link]!
+  todos: [Todo]!
 }
 
 type Mutation {
-  post(url: String!, description: String!): Link!
+  createTodo(note: String!): Todo!
+  updateTodo(id: ID!, status: String, note: String): Todo!
+  deleteTodo(id: ID!): Todo!
 }
 
-type Link {
+type Subscription {
+  todoUpdated: Todo!
+}
+
+type Todo {
   id: ID!
-  description: String!
-  url: String!
+  createdAt: String!
+  updatedAt: String!
+  note: String!
+  status: String!
 }

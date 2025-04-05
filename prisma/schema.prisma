@@ -7,9 +7,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Link {
+enum Status {
+  pending
+  done
+}
+
+model Todo {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
-  description String
-  url         String
+  updatedAt   DateTime @updatedAt
+  note        String
+  status      Status   @default(pending)
 }
