@@ -6,10 +6,12 @@ const resolvers = {
   },
   Mutation: {
     createTodo: async (_parent, args, context) => {
-      const { note } = args;
+      const { title, note, creatorId } = args;
       const newTodo = await context.prisma.todo.create({
         data: {
+          title: title || "",
           note,
+          creatorId: creatorId ? parseInt(creatorId) : 0,
         },
       });
       context.pubsub.publish("TODO_UPDATED", { todoUpdated: newTodo });

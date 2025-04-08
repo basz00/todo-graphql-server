@@ -16,6 +16,8 @@ model Todo {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  title       String?  @default("")
   note        String
   status      Status   @default(pending)
+  creatorId   Int      @default(0)
 }
