@@ -7,40 +7,64 @@ const resolvers = {
   Mutation: {
     createTodo: async (_parent, args, context) => {
       const { title, note, creatorId } = args;
-      const newTodo = await context.prisma.todo.create({
+      const newNote = await context.prisma.todo.create({
         data: {
           title: title || "",
           note,
           creatorId: creatorId ? parseInt(creatorId) : 0,
         },
       });
-      context.pubsub.publish("TODO_UPDATED", { todoUpdated: newTodo });
-      return newTodo;
+
+      const eventPayload = {
+        type: "CREATED",
+        note: newNote,
+        id: newNote.id,
+      };
+      context.pubsub.publish("NOTE_CHANGED_EVENT", {
+        noteChanged: eventPayload,
+      });
+      return newNote;
     },
     updateTodo: async (_parent, args, context) => {
-      const { id, status, note } = args;
-      const updatedTodo = await context.prisma.todo.update({
+      const { id, title, note, status } = args;
+      const updatedNote = await context.prisma.todo.update({
         where: { id: parseInt(id) },
         data: {
-          ...{ status, note },
+          ...{ title, status, note },
         },
       });
-      context.pubsub.publish("TODO_UPDATED", { todoUpdated: updatedTodo });
-      return updatedTodo;
+
+      const eventPayload = {
+        type: "UPDATED",
+        note: updatedNote,
+        id: updatedNote.id,
+      };
+      context.pubsub.publish("NOTE_CHANGED_EVENT", {
+        noteChanged: eventPayload,
+      });
+      return updatedNote;
     },
     deleteTodo: async (_parent, args, context) => {
       const { id } = args;
-      const deletedTodo = await context.prisma.todo.delete({
+      const deletedNote = await context.prisma.todo.delete({
         where: { id: parseInt(id) },
       });
-      context.pubsub.publish("TODO_UPDATED", { todoUpdated: deletedTodo });
-      return deletedTodo;
+
+      const eventPayload = {
+        type: "DELETED",
+        note: deletedNote,
+        id: deletedNote.id,
+      };
+      context.pubsub.publish("NOTE_CHANGED_EVENT", {
+        noteChanged: eventPayload,
+      });
+      return deletedNote;
     },
   },
   Subscription: {
-    todoUpdated: {
+    noteChanged: {
       subscribe: (_parent, _args, context) =>
-        context.pubsub.asyncIterableIterator(["TODO_UPDATED"]),
+        context.pubsub.asyncIterableIterator(["NOTE_CHANGED_EVENT"]),
     },
   },
 };
