@@ -3,3 +3,6 @@ node_modules
 .env
 prisma/dev.db
 prisma/migrations
+
+localhost-key.pem
+localhost.pem

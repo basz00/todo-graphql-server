@@ -1,18 +1,18 @@
 type Query {
-  todos: [Todo]!
+  notes: [Note]!
 }
 
 type Mutation {
-  createTodo(title: String, note: String!, creatorId: ID): Todo!
-  updateTodo(id: ID!, title: String, note: String, status: String): Todo!
-  deleteTodo(id: ID!): Todo!
+  createNote(title: String, note: String!, creatorId: ID): Note!
+  updateNote(id: ID!, title: String, note: String, status: String): Note!
+  deleteNote(id: ID!): Note!
 }
 
 type Subscription {
   noteChanged: NoteChangePayload!
 }
 
-type Todo {
+type Note {
   id: ID!
   createdAt: String!
   updatedAt: String!
@@ -24,7 +24,7 @@ type Todo {
 
 type NoteChangePayload {
   type: ChangeType!
-  note: Todo
+  note: Note
   id: ID!
 }
 

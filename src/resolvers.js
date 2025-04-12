@@ -1,13 +1,13 @@
 const resolvers = {
   Query: {
-    todos: async (_parent, _args, context) => {
-      return context.prisma.todo.findMany();
+    notes: async (_parent, _args, context) => {
+      return context.prisma.note.findMany();
     },
   },
   Mutation: {
-    createTodo: async (_parent, args, context) => {
+    createNote: async (_parent, args, context) => {
       const { title, note, creatorId } = args;
-      const newNote = await context.prisma.todo.create({
+      const newNote = await context.prisma.note.create({
         data: {
           title: title || "",
           note,
@@ -25,9 +25,9 @@ const resolvers = {
       });
       return newNote;
     },
-    updateTodo: async (_parent, args, context) => {
+    updateNote: async (_parent, args, context) => {
       const { id, title, note, status } = args;
-      const updatedNote = await context.prisma.todo.update({
+      const updatedNote = await context.prisma.note.update({
         where: { id: parseInt(id) },
         data: {
           ...{ title, status, note },
@@ -44,9 +44,9 @@ const resolvers = {
       });
       return updatedNote;
     },
-    deleteTodo: async (_parent, args, context) => {
+    deleteNote: async (_parent, args, context) => {
       const { id } = args;
-      const deletedNote = await context.prisma.todo.delete({
+      const deletedNote = await context.prisma.note.delete({
         where: { id: parseInt(id) },
       });
 
