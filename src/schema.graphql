@@ -14,8 +14,8 @@ type Subscription {
 
 type Note {
   id: ID!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   title: String!
   note: String!
   status: String!
@@ -33,3 +33,5 @@ enum ChangeType {
   UPDATED
   DELETED
 }
+
+scalar DateTime
