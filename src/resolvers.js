@@ -3,8 +3,14 @@ import { GraphQLDateTimeISO } from "graphql-scalars";
 const resolvers = {
   DateTime: GraphQLDateTimeISO,
   Query: {
-    notes: async (_parent, _args, context) => {
-      return context.prisma.note.findMany();
+    notes: async (_parent, { orderBy }, context) => {
+      return context.prisma.note.findMany({
+        orderBy: orderBy
+          ? {
+              [orderBy.field]: orderBy.direction || "asc",
+            }
+          : undefined,
+      });
     },
   },
   Mutation: {
